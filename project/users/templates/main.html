@@ -1,0 +1,38 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title  %} 
+    <title>FiftyVibe</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+{% endblock %}
+
+{% block main %}
+<main class="min-h-[90vh] px-[150px] w-full flex items-center justify-between max-lg:px-[50px] max-md:flex-col-reverse max-md:py-[100px] max-sm:px-[5px]">
+    {% comment %} bg-[#FaF1F4] {% endcomment %}
+    <section class='min-h-[90vh] flex justify-center items-center w-max flex-col gap-10 max-md:w-full'>
+        <div class='flex flex-col items-center h-max'>
+            <h1 class='text-[#5b0E14] font-bold text-[250px] leading-[200px] max-xl:text-[200px]' id='name1'>
+                <span>5</span><span>0</span>
+            </h1>
+            <p class='text-[#5b0E14] font-bold text-4xl' id='name2'><span>v</span><span>i</span><span>b</span><span>e</span></p>
+        </div>
+        <div class='flex items-center flex-col gap-1 mt-10'>
+            <p class='text-[#9b0E27] font-semibold text-wrap'>FiftyVibe will help you connect with friends and have fun.</p>
+            <p>Don't you have an account? Then <a href="{% url 'sign_up' %}" class="text-[#9b0E27] font-semibold">Sign Up</a></p>
+        </div>
+    </section>
+    <section class='flex flex-col items-center gap-5 px-10 py-6 w-[45%] max-md:w-full'>
+        <h3 class='text-5xl text-[#5b0E14] font-bold' id='h3'>Login</h3>
+        <form class='flex flex-col items-center gap-5 w-full' method='POST'>
+            {% csrf_token %}
+            <input type="text" placeholder='Email or Username' class='px-[15px] py-[5px] bg-[#FaF1F4] border-b border-[#5b0E14] placeholder:text-[black]/80 rounded outline-none focus:border-[#9b0E27] w-full' name='user'>
+            <input type="password" placeholder='Password' class='px-[15px] py-[5px] bg-[#FaF1F4] border-b border-[#5b0E14] placeholder:text-[black]/80 rounded outline-none focus:border-[#9b0E27] w-full' name='password'>
+            <button type='submit' class='bg-[#9b0E27] px-10 py-3 rounded w-full text-[#FaF1F4] duration-100 hover:opacity-90'>Submit</button>
+        </form>
+        <a href="" class='underline text-[#9b0E27]'>Forgot your password?</a>
+    </section>
+
+</main>
+{% include 'footer.html' %}
+
+{% endblock %}
