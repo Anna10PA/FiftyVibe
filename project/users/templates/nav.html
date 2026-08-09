@@ -1,0 +1,53 @@
+{% load static %}
+
+<nav class='min-h-screen flex flex-col items-center px-3 justify-between pb-[20px] bg-[#5B0E14] w-[40%] max-w-[250px] py-[20px]'>
+        <div class='w-full flex flex-col gap-[70px]'>
+            <h2 class="text-[#FAF1F4] text-2xl px-[10px] font-semibold" id="icon_name">FiftyVibe.com</h2>
+            <ul class="flex flex-col items-start justify-between min-h-[45vh] gap-[2px] w-full px-[5px]">
+                <a href="/" class="w-full">
+                    <li class="text-[#FAF1F4] w-full flex items-center gap-[15px] px-[10px] duraion-100  hover:bg-[#FAF1F4] hover rounded rounded py-[5px] cursor-pointer hover:opacity-80 hover:text-[#5B0E14]">
+                        <i class="fa-solid fa-house text-xl"></i> Home
+                    </li>
+                </a>
+            <li class="text-[#FAF1F4] w-full flex items-center gap-[15px] px-[10px] duraion-100  hover:bg-[#FAF1F4] hover rounded rounded py-[5px] cursor-pointer hover:opacity-80 hover:text-[#5B0E14]">
+                <i class="fa-solid fa-magnifying-glass text-xl"></i> 
+                Search 
+            </li>
+            <li class="text-[#FAF1F4] w-full flex items-center gap-[15px] px-[10px] duraion-100  hover:bg-[#FAF1F4] hover rounded rounded py-[5px] cursor-pointer hover:opacity-80 hover:text-[#5B0E14]">
+                <i class="fa-solid fa-user-group  text-xl"></i> Groups
+            </li>
+            <li class="text-[#FAF1F4] w-full flex items-center gap-[15px] px-[10px] duraion-100  hover:bg-[#FAF1F4] hover rounded rounded py-[5px] cursor-pointer hover:opacity-80 hover:text-[#5B0E14]">
+                <i class="fa-regular fa-star text-xl"></i> Notifications
+            </li>
+            <li class="text-[#FAF1F4] w-full flex items-center gap-[15px] px-[10px] duraion-100  hover:bg-[#FAF1F4] hover rounded rounded py-[5px] cursor-pointer hover:opacity-80 hover:text-[#5B0E14]">
+                <i class="fa-regular fa-paper-plane  text-xl"></i> 
+                Messages
+            </li>
+            <li class="text-[#FAF1F4] w-full flex items-center gap-[15px] px-[10px] duraion-100  hover:bg-[#FAF1F4] hover rounded rounded py-[5px] cursor-pointer hover:opacity-80 hover:text-[#5B0E14]">
+                <i class="fa-solid fa-gear text-xl"></i> 
+                Settings</li>
+            </ul>
+        </div>
+        <div class="w-full px-[5px] flex flex-col items-start gap-[40px]">
+            <a href="{% url 'log_out' %}" class="text-[#FAF1F4] w-full flex items-center gap-[15px] px-[10px] hover rounded rounded py-[5px] cursor-pointer hover:opacity-80 hover:text-[#5B0E14]duraion-100 bg-[#B8202A]">
+                <i class="fa-solid fa-right-from-bracket text-xl "></i>
+                logout
+            </a>
+            <a href="/user_profile">
+                <div class='flex items-center gap-[10px]'>
+                    {% if user.profile %}
+                    <img src="{{ user.profile.url }}" alt="{{ user.profile.url }}" class='w-[50px] h-[50px] rounded-[50%]'>
+                    {% else %}
+                    <img src="{% static 'images/default_profile.png' %}" alt="" class='w-[50px] h-[50px] rounded-[50%]'>
+                    {% endif%}
+                <div class="flex flex-col gap-[0px]">
+                    <p class="text-[#FAF1F4] font-semibold">
+                        {{user.first_name}}
+                        {{user.last_name}}
+                    </p>
+                    <p class='text-[#B8202A] text-sm'>view profile</p>
+                </div>
+            </div>
+        </a>
+        </div>
+    </nav>

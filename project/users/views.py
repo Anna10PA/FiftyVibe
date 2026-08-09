@@ -102,3 +102,6 @@ def user_page(req):
 def log_out(req):
     logout(req)
     return redirect('log_in')
+
+def user_profile(req, username):
+    return render(req, 'user_profile.html', {'username': username})
