@@ -8,27 +8,101 @@
 {% endblock %}
 
 {% block 'main' %}
-    <main class="min-h-[90vh] w-full flex items-start justify-between gap-[15px]">
+    <main class="min-h-[90vh] w-full flex items-start justify-between gap-[10px]">
         {% include 'nav.html' %}
-        <section class="flex flex-col items-start w-full py-[20px] h-[98vh] overflow-auto">
-            <div class="w-full relative">
-                {% if user.cover %}
+        <section class="flex flex-col items-center w-full h-screen overflow-auto">
+            <section class="flex flex-col items-start w-full py-[15px] min-h-[52vh] justify-start">
+                <div class="w-full relative">
+                    {% if user.cover %}
                     <img src="{{ user.cover.url }}" alt="{{ user.cover.url }}" class="w-full object-cover rounded h-[270px] "> 
-                {% else %}
+                    {% else %}
                     <img src="{% static 'images/default_cover.png' %}" alt="" class="w-full object-cover rounded h-[270px] ">
-                {% endif %}
-
-                {% if user.profile %}
+                    {% endif %}
+                    <button class="absolute bottom-5 right-5 bg-[#5B0E14] text-white px-10 py-2 rounded flex justify-between items-center gap-[10px] cursor-pointer hover:opacity-80 duration-100">Edit <i class="fa-solid fa-pen"></i></button>
+                    {% if user.profile %}
                     <img src="{{ user.profile.url }}" alt="{{ user.profile }}" class="w-[150px] h-[150px] rounded-[50%] border border-[#FAF1F4] border-[5px] absolute -bottom-16 left-10 ">
-                {% else %}
+                    {% else %}
                     <img src="{% static 'images/default_profile.png' %}" alt="" class="w-[150px] h-[150px] rounded-[50%] border border-[#FAF1F4] border-[5px] absolute -bottom-16 left-10 ">
-                {% endif %}
-            </div> 
-            <div class="relative w-full">
-                <div class='absolute top-4 left-[200px]'>
-                    <h2 class='font-semibold text-2xl'>{{ user.first_name }} {{ user.last_name }}</h2>
+                    {% endif %}
+                </div> 
+                <div class="relative w-full">
+                    <div class='absolute top-3 left-[200px]'>
+                        <h2 class='font-semibold text-2xl'>{{ user.first_name }} {{ user.last_name }}</h2>
+                        <p class="text-sm text-gray-500">@{{ user.username }}</p>
+                    </div>
+                    <i class="fa-solid fa-plus absolute top-5 right-2 text-gray-800 text-2xl duration-100 hover:text-[#5B0E14] cursor-pointer" id="new_post" ></i>
                 </div>
-            </div>
+            </section>
+            <section class='w-full flex items-start gap-[20px] justify-between'>
+                <div class="flex flex-col items-start gap-[15px]">
+                    <h2 class="text-[#5B0E14] text-2xl font-bold">About me</h2>
+                    <ul class="text-sm text-gray-500 flex flex-col items-start gap-[5px]">
+                        <li class="flex items-end gap-[20px] justify-between ">
+                            <i class="fa-regular fa-user text-[#5B0E14]"></i> 
+                            <span>
+                                @{{ user.username }}
+                            </span>
+                        </li class="flex items-end gap-[20px] justify-between ">
+                        <li class="flex items-end gap-[20px] justify-between "> 
+                            <i class="fa-solid fa-cake-candles text-[#5B0E14]"></i>  
+                            <span>
+                                {{ user.b_day }}
+                            </span>
+                        </li class="flex items-end gap-[20px] justify-between ">
+                        <li class="flex items-end gap-[20px] justify-between ">
+                            <i class="fa-regular fa-envelope text-[#5B0E14]"></i> 
+                            <span>
+                                {{ user.email }}
+                            </span>
+                        </li class="flex items-end gap-[20px] justify-between ">
+                    </ul>
+                </div>
+                <div class="w-full flex flex-col items-center gap-[20px]">
+                    <div class='w-full max-w-[650px] border rounded flex items-center p-1 rounded-[130px] relative'>
+                        {% if user.profile %}
+                            <img src="{{ user.profile.url }}" alt="" class='rounded-[50%] w-[40px] h-[40px]'>
+                        {% else %}
+                            <img src="{% static 'images/default_profile.png' %}" alt="" class='rounded-[50%] w-[40px] h-[40px]'>
+                        {% endif %} 
+                            <input type="text" class='w-full h-full h-[40px] outline-none px-3' placeholder="New post . . .">
+                        <i class="fa-solid fa-image absolute right-5 text-gray-500 cursor-pointer"></i>
+                    </div>
+                    <nav class="w-full max-w-[650px] border-b border-[#5B0E14] pb-[12px]">
+                        <ul class="flex items-center justify-around w-full gap-[10px] text-gray-500">
+                            <li class="duration-100 hover:text-[#5B0E14] cursor-pointer">All</li>
+                            <li class="duration-100 hover:text-[#5B0E14] cursor-pointer">Photo</li>
+                            <li class="duration-100 hover:text-[#5B0E14] cursor-pointer">Video</li>
+                            <li class="duration-100 hover:text-[#5B0E14] cursor-pointer">Friends</li>
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+            <section class="grid grid-cols-2 mt-[20px]">
+                <div>
+                    <div class='flex w-full justify-start gap-[20px]'>
+                        <img src="{% static 'images/default_profile.png' %}" alt="" class="w-[45px] h-[45px] rounded-[50%]">
+                        <div>
+                            <p>
+                                {{user.first_name}}
+                                {{user.last_name}}
+                            </p>
+                            <p>
+                                20:00
+                            </p>
+                        </div>
+                    </div>
+                    <p>New Post</p>
+                    <img src="{% static 'images/default_profile.png' %}" alt="">
+                    <div class="flex items-center justify-between ">
+                        <div class="flex items-center gap-[15px] text-gray-500 text-2xl">
+                            <i class="fa-regular fa-star"></i>
+                            <i class="fa-regular fa-comment"></i>
+                            <i class="fa-regular fa-paper-plane"></i>
+                        </div>
+                        <i class="fa-regular fa-bookmark text-2xl text-gray-500"></i>
+                    </div>
+                </div>
+            </section>
         </section>
         {% include 'aside.html' %}
     </main>
