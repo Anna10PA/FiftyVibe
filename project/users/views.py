@@ -20,7 +20,6 @@ def log_in(req):
             return redirect('user_page')
         else:
             return render(req, 'main.html', {'message': 'user not found'})
-        
     return render(req, 'main.html')
 
 def sign_up(req):
@@ -88,7 +87,11 @@ def verify_code(req):
             user_code = req.POST['code']
             if code == user_code:
                 User.objects.create_user(first_name = reg_info['first_name'], last_name = reg_info['last_name'], username = reg_info['username'], password = reg_info['password'], b_day = reg_info['b_day'], gender = reg_info['gender'], email = reg_info['email'])
-                return redirect('user_page')
+                user = authenticate(req, username = reg_info['username'], password=reg_info['password'])
+
+                if user:
+                    login(req, user)
+                    return redirect('user_page')
             else:
                 return render(req, 'verify_code.html', {'message': 'Code is not correct'})
     return render(req, 'verify_code.html')
@@ -104,4 +107,7 @@ def log_out(req):
     return redirect('log_in')
 
 def user_profile(req, username):
-    return render(req, 'user_profile.html', {'username': username})
+    return render(req, 'user_profile.html')
+
+def new_post(req):
+    return render(req, 'user_profile.html', {'type': 'new_post'})

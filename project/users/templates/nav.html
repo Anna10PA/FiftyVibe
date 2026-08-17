@@ -17,7 +17,7 @@
                 <i class="fa-solid fa-user-group  text-xl"></i> Groups
             </li>
             <li class="text-[#FAF1F4] w-full flex items-center gap-[15px] px-[10px] duraion-100  hover:bg-[#FAF1F4] hover rounded rounded py-[5px] cursor-pointer hover:opacity-80 hover:text-[#5B0E14]">
-                <i class="fa-regular fa-star text-xl"></i> Notifications
+                <i class="fa-regular fa-bell text-xl"></i> Notifications
             </li>
             <li class="text-[#FAF1F4] w-full flex items-center gap-[15px] px-[10px] duraion-100  hover:bg-[#FAF1F4] hover rounded rounded py-[5px] cursor-pointer hover:opacity-80 hover:text-[#5B0E14]">
                 <i class="fa-regular fa-paper-plane  text-xl"></i> 
@@ -33,12 +33,12 @@
                 <i class="fa-solid fa-right-from-bracket text-xl "></i>
                 logout
             </a>
-            <a href="/user_profile">
+            <a href="{% url 'user_profile' user.username %}">
                 <div class='flex items-center gap-[10px]'>
                     {% if user.profile %}
                     <img src="{{ user.profile.url }}" alt="{{ user.profile.url }}" class='w-[50px] h-[50px] rounded-[50%]'>
                     {% else %}
-                    <img src="{% static 'images/default_profile.png' %}" alt="" class='w-[50px] h-[50px] rounded-[50%]'>
+                    <img src="{% static 'images/profile.png' %}" alt="" class='w-[50px] h-[50px] rounded-[50%]'>
                     {% endif%}
                 <div class="flex flex-col gap-[0px]">
                     <p class="text-[#FAF1F4] font-semibold">

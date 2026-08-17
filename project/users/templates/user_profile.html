@@ -5,10 +5,55 @@
     <link rel="stylesheet" href="{% static 'style.css' %}">
     <script src="https://kit.fontawesome.com/b2005d7310.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        *::-webkit-scrollbar {
+            width: 0;
+            display: none;
+        }
+    </style>
 {% endblock %}
 
 {% block 'main' %}
-    <main class="min-h-[90vh] w-full flex items-start justify-between gap-[10px]">
+    <main class="min-h-[90vh] w-full flex items-start justify-between gap-[20px] bg-[#FADAE3]">
+        {% if type == 'new_post' %}
+        <div class='absolute z-[500] w-full h-screen bg-black/60 backdrop-blur-sm flex items-center justify-center'>
+            <div class='bg-[#FADAE3] p-5 max-w-[600px] w-full flex flex-col items-start gap-[20px] relative'>
+                <a href="{% url 'user_profile' user.username %}" class='absolute top-3 right-5'>
+                    <i class="fa-solid fa-xmark cursor-pointer text-2xl text-gray-500"></i>
+                </a>
+                <div class='flex items-center gap-[10px] '>
+                    {% if user.profile %}
+                        <img src="{{ user.profile.url }}" alt="" class='w-[50px] h-[50px] rounded-[50%] object-cover'>
+                    {% else %}
+                        <img src="{% static 'images/profile.png' %}" alt="" class='w-[50px] h-[50px] rounded-[50%] object-cover'>
+                    {% endif %}
+                    <div class='flex flex-col items-start gap-1'>
+                        <h2 class='font-semibold text-md'>{{ user.first_name }} {{ user.last_name }}</h2>
+                        <select class='text-[12px] outline-none border border-[#5B0E14] bg-[#FADAE3] px-2 py-0.5 rounded'>
+                            <option value="public" class='duration-100'>
+                                Public
+                            </option>
+                            <option value="friends" class='duration-100'>
+                                Friends
+                            </option>
+                            <option value="only_me" class='duration-100'>
+                                Only me
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <textarea name="" id="" class='w-full max-h-[500px] min-h-[100px] bg-black/0 border border-[#5B0E14] rounded-lg px-2 py-1 outline-none' placeholder='{{ user.first_name }} What do you think?' ></textarea>
+                <div class='flex items-center justify-between gap-[20px] w-full'>
+                    <div class='text-2xl text-[#5B0E14] flex items-center gap-[20px]'>
+                        <i class="fa-solid fa-images"></i>
+                        <i class="fa-solid fa-user-tag"></i>
+                        <i class="fa-solid fa-face-smile"></i>
+                    </div>
+                    <button class='bg-[#5B0E14] text-white px-5 py-2 rounded max-w-[220px] w-full'>Post</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         {% include 'nav.html' %}
         <section class="flex flex-col items-center w-full h-screen overflow-auto">
             <section class="flex flex-col items-start w-full py-[15px] min-h-[52vh] justify-start">
@@ -19,22 +64,62 @@
                     <img src="{% static 'images/default_cover.png' %}" alt="" class="w-full object-cover rounded h-[270px] ">
                     {% endif %}
                     <button class="absolute bottom-5 right-5 bg-[#5B0E14] text-white px-10 py-2 rounded flex justify-between items-center gap-[10px] cursor-pointer hover:opacity-80 duration-100">Edit <i class="fa-solid fa-pen"></i></button>
-                    {% if user.profile %}
-                    <img src="{{ user.profile.url }}" alt="{{ user.profile }}" class="w-[150px] h-[150px] rounded-[50%] border border-[#FAF1F4] border-[5px] absolute -bottom-16 left-10 ">
-                    {% else %}
-                    <img src="{% static 'images/default_profile.png' %}" alt="" class="w-[150px] h-[150px] rounded-[50%] border border-[#FAF1F4] border-[5px] absolute -bottom-16 left-10 ">
-                    {% endif %}
+                    <div class='relative w-[150px] '>
+                        {% if user.profile %}
+                        <img src="{{ user.profile.url }}" alt="{{ user.profile }}" class="w-[150px] h-[150px] rounded-[50%] object-cover border border-[#FAF1F4] border-[5px] absolute -bottom-16 left-10 ">
+                        {% else %}
+                        <img src="{% static 'images/profile.png' %}" alt="" class="w-[150px] h-[150px] rounded-[50%] border object-cover border-[#FAF1F4] border-[5px] absolute -bottom-16 left-10 ">
+                        {% endif %}
+                        <div class="flex items-center justify-center rounded-[50%] w-[45px] h-[45px]  duration-100 cursor-pointer text-[#5B0E14] hover:text-white hover:bg-[#5B0E14] absolute -bottom-[60px] -right-[40px] backdrop-blur-md border-2">
+                            <i class="fa-solid fa-pen"></i>
+                        </div>
+                    </div>
                 </div> 
                 <div class="relative w-full">
-                    <div class='absolute top-3 left-[200px]'>
-                        <h2 class='font-semibold text-2xl'>{{ user.first_name }} {{ user.last_name }}</h2>
-                        <p class="text-sm text-gray-500">@{{ user.username }}</p>
+                    <div class='absolute top-3 left-[210px] flex items-center gap-[50px] justify-between'>
+                        <div>
+                            <h2 class='font-semibold text-2xl'>{{ user.first_name }} {{ user.last_name }}</h2>
+                            <p class="text-sm text-gray-500">@{{ user.username }}</p>
+                        </div>
+                        <div class="flex items-center gap-[30px]">
+                            <div class="flex flex-col items-center gap-0 opacity-70 leading-[1.1]">
+                                <p class="font-bold text-[30px]">0</p>
+                                <p class="text-sm tracking-[1px]">Posts </p>
+                            </div>
+                            <div class="flex flex-col items-center gap-0 opacity-70 leading-[1.1]">
+                                <p class="font-bold text-[30px]">0</p>
+                                <p class="text-sm tracking-[1px]">Following </p>
+                            </div>
+                            <div class="flex flex-col items-center gap-0 opacity-70 leading-[1.1]">
+                                <p class="font-bold text-[30px]">0</p>
+                                <p class="text-sm tracking-[1px]">Followers </p>
+                            </div>
+                            <div class="flex flex-col items-center gap-0 opacity-70 leading-[1.1]">
+                                <p class="font-bold text-[30px]">0</p>
+                                <p class="text-sm tracking-[1px]">Friends </p>
+                            </div>
+                        </div>
                     </div>
-                    <i class="fa-solid fa-plus absolute top-5 right-2 text-gray-800 text-2xl duration-100 hover:text-[#5B0E14] cursor-pointer" id="new_post" ></i>
+                    <div>
+                        <i class="fa-solid fa-plus absolute top-5 right-2 text-gray-800 text-2xl duration-100 hover:text-[#5B0E14] cursor-pointer " id="new_post"></i>
+                        <div class='bg-[#A3202A] absolute translate-x-[130px] right-0 z-[100] top-[60px] w-max px-3 py-5 rounded flex flex-col items-center gap-[15px] opacity-100 duration-300' id='nav'>
+                            <a href="{% url 'new_post' %}" class='w-full'>
+                                <div class='px-[10px] py-[2px] bg-[#FADAE3] text-[#5B0E14] w-full cursor-pointer duration-100 hover:opacity-70'>
+                                    New Post
+                                </div>
+                            </a>
+                            <div class='px-[10px] py-[2px] bg-[#FADAE3] text-[#5B0E14] w-full cursor-pointer duration-100 hover:opacity-70'>
+                                New Story
+                            </div>
+                            <div class='px-[10px] py-[2px] bg-[#FADAE3] text-[#5B0E14] w-full cursor-pointer duration-100 hover:opacity-70'>
+                                New Note
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
-            <section class='w-full flex items-start gap-[20px] justify-between'>
-                <div class="flex flex-col items-start gap-[15px]">
+            <section class='w-full flex items-start gap-[40px] justify-between'>
+                <div class="flex flex-col items-start gap-[5px]">
                     <h2 class="text-[#5B0E14] text-2xl font-bold">About me</h2>
                     <ul class="text-sm text-gray-500 flex flex-col items-start gap-[5px]">
                         <li class="flex items-end gap-[20px] justify-between ">
@@ -42,30 +127,36 @@
                             <span>
                                 @{{ user.username }}
                             </span>
-                        </li class="flex items-end gap-[20px] justify-between ">
+                        </li>
                         <li class="flex items-end gap-[20px] justify-between "> 
                             <i class="fa-solid fa-cake-candles text-[#5B0E14]"></i>  
                             <span>
                                 {{ user.b_day }}
                             </span>
-                        </li class="flex items-end gap-[20px] justify-between ">
+                        </li>
+                        <li class="flex items-end gap-[16px] justify-between ">
+                            <i class="fa-solid fa-venus-mars text-[#5B0E14]"></i>
+                             <span>
+                                {{ user.gender }}
+                            </span>
+                        </li>
                         <li class="flex items-end gap-[20px] justify-between ">
                             <i class="fa-regular fa-envelope text-[#5B0E14]"></i> 
                             <span>
                                 {{ user.email }}
                             </span>
-                        </li class="flex items-end gap-[20px] justify-between ">
+                        </li>
                     </ul>
                 </div>
                 <div class="w-full flex flex-col items-center gap-[20px]">
-                    <div class='w-full max-w-[650px] border rounded flex items-center p-1 rounded-[130px] relative'>
+                    <div class='w-full max-w-[650px] border border-[#5B0E14] rounded flex items-center p-1 rounded-[130px] relative'>
                         {% if user.profile %}
                             <img src="{{ user.profile.url }}" alt="" class='rounded-[50%] w-[40px] h-[40px]'>
                         {% else %}
-                            <img src="{% static 'images/default_profile.png' %}" alt="" class='rounded-[50%] w-[40px] h-[40px]'>
+                            <img src="{% static 'images/profile.png' %}" alt="" class='rounded-[50%] w-[40px] h-[40px]'>
                         {% endif %} 
-                            <input type="text" class='w-full h-full h-[40px] outline-none px-3' placeholder="New post . . .">
-                        <i class="fa-solid fa-image absolute right-5 text-gray-500 cursor-pointer"></i>
+                        <input type="text" class='w-full h-full h-[40px] outline-none px-3 placeholder:text-[#5B0E14] bg-black/0' placeholder="New post . . ." >
+                        <i class="fa-regular fa-face-smile absolute right-5 text-gray-500 cursor-pointer"></i>
                     </div>
                     <nav class="w-full max-w-[650px] border-b border-[#5B0E14] pb-[12px]">
                         <ul class="flex items-center justify-around w-full gap-[10px] text-gray-500">
@@ -77,33 +168,89 @@
                     </nav>
                 </div>
             </section>
-            <section class="grid grid-cols-2 mt-[20px]">
-                <div>
-                    <div class='flex w-full justify-start gap-[20px]'>
-                        <img src="{% static 'images/default_profile.png' %}" alt="" class="w-[45px] h-[45px] rounded-[50%]">
-                        <div>
-                            <p>
+            <section class="grid grid-cols-2 mt-[50px] gap-[25px] pb-[50px]">
+                <div class='flex flex-col items-start w-full gap-[5px] border rounded p-2 border-[#5B0E14]'>
+                    <div class='flex w-full justify-start gap-[10px] relative'>
+                        <img src="{% static 'images/profile.png' %}" alt="" class="w-[45px] h-[45px] rounded-[50%]">
+                        <div class="leading-[1.2]">
+                            <p class="font-bold">
                                 {{user.first_name}}
                                 {{user.last_name}}
                             </p>
-                            <p>
+                            <p class="opacity-70 text-sm">
                                 20:00
                             </p>
                         </div>
+                        <div class='flex items-center gap-[10px] absolute top-0 right-0 opacity-50'>
+                            <p class='tracking-[0.5px]'>Public</p>
+                            <i class="fa-solid fa-earth-americas text-xl "></i>
+                        </div>
                     </div>
                     <p>New Post</p>
-                    <img src="{% static 'images/default_profile.png' %}" alt="">
-                    <div class="flex items-center justify-between ">
+                    <img src="{% static 'images/profile.png' %}" alt="">
+                    <div class="flex items-center justify-between w-full">
                         <div class="flex items-center gap-[15px] text-gray-500 text-2xl">
-                            <i class="fa-regular fa-star"></i>
-                            <i class="fa-regular fa-comment"></i>
-                            <i class="fa-regular fa-paper-plane"></i>
+                            <div class='flex items-center gap-[5px] cursor-pointer'>
+                                <i class="fa-regular fa-star"></i>
+                                <p class="text-[17px]">0</p>
+                            </div>
+                            <div class='flex items-center gap-[5px] cursor-pointer'>
+                                <i class="fa-regular fa-comment"></i>
+                                <p class="text-[17px]">0</p>
+                            </div>
+                            <div class='flex items-center gap-[5px] cursor-pointer'>
+                                <i class="fa-regular fa-paper-plane"></i>
+                                <p class="text-[17px]">0</p>
+                            </div>
                         </div>
-                        <i class="fa-regular fa-bookmark text-2xl text-gray-500"></i>
+                        <i class="fa-regular fa-bookmark text-2xl text-yellow-600"></i>
+                    </div>
+                </div>
+                <div class='flex flex-col items-start w-full gap-[5px] border rounded p-2 border-[#5B0E14]'>
+                    <div class='flex w-full justify-start gap-[10px] relative'>
+                        <img src="{% static 'images/profile.png' %}" alt="" class="w-[45px] h-[45px] rounded-[50%]">
+                        <div class="leading-[1.2]">
+                            <p class="font-bold">
+                                {{user.first_name}}
+                                {{user.last_name}}
+                            </p>
+                            <p class="opacity-70 text-sm">
+                                20:00
+                            </p>
+                        </div>
+                        <div class='flex items-center gap-[10px] absolute top-0 right-0 opacity-50'>
+                            <p class='tracking-[0.5px]'>Public</p>
+                            <i class="fa-solid fa-earth-americas text-xl "></i>
+                        </div>
+                    </div>
+                    <p>New Post</p>
+                    <img src="{% static 'images/profile.png' %}" alt="">
+                    <div class="flex items-center justify-between w-full">
+                        <div class="flex items-center gap-[15px] text-gray-500 text-2xl">
+                            <div class='flex items-center gap-[5px] cursor-pointer'>
+                                <i class="fa-regular fa-star"></i>
+                                <p class="text-[17px]">0</p>
+                            </div>
+                            <div class='flex items-center gap-[5px] cursor-pointer'>
+                                <i class="fa-regular fa-comment"></i>
+                                <p class="text-[17px]">0</p>
+                            </div>
+                            <div class='flex items-center gap-[5px] cursor-pointer'>
+                                <i class="fa-regular fa-paper-plane"></i>
+                                <p class="text-[17px]">0</p>
+                            </div>
+                        </div>
+                        <i class="fa-regular fa-bookmark text-2xl text-gray-500 text-yellow-600"></i>
                     </div>
                 </div>
             </section>
+            <div class="w-full flex items-center justify-center text-3xl gap-[10px] py-[50px] flex-col tracking-[1px]">
+                <p>{{user.first_name}}'s birthday is {{user.b_day}}</p>
+                <p class="text-sm opacity-50">{{user.date_joined}}</p>
+            </div>
         </section>
         {% include 'aside.html' %}
     </main>
+    <script src="{% static 'script.js' %}"></script>
+
 {% endblock %}
