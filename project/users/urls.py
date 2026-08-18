@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import log_in, sign_up, verify_code, user_page, log_out, user_profile, new_post
+from django.conf import settings 
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('login/', log_in, name='log_in'),
@@ -10,3 +12,7 @@ urlpatterns = [
     path('profile/<str:username>/', user_profile, name='user_profile'),
     path('new_post/', new_post, name='new_post')
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -12,12 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 })
 
-// user_profile.html
+
+// user_profile.html / nav
 let new_post = document.querySelector('#new_post')
 let nav = document.querySelector('#nav')
 let open = true
 
-new_post.addEventListener('click', (e)=> {
+new_post.addEventListener('click', (e) => {
     if (open) {
         new_post.className = 'fa-solid fa-minus absolute top-5 right-2 text-gray-800 text-2xl duration-100 hover:text-[#5B0E14] cursor-pointer '
         nav.className = 'bg-[#A3202A] absolute translate-x-[0px] right-0 z-[100] top-[60px] w-max px-3 py-5 rounded flex flex-col items-center gap-[15px] opacity-100 duration-300'
@@ -26,4 +27,20 @@ new_post.addEventListener('click', (e)=> {
         nav.className = 'bg-[#A3202A] absolute right-0 z-[100] translate-x-[100px] top-[60px] w-max px-3 py-5 rounded flex flex-col items-center gap-[15px] duration-300 opacity-0'
     }
     open = !open
+})
+
+
+// user_profile.html
+
+let files = document.querySelector('#files')
+
+files.addEventListener('change', (e) => {
+    let file = URL.createObjectURL(e.target.files[0])
+    let show_posts = document.querySelector('#show_posts')
+
+    show_posts.innerHTML += `
+        <div class="last:odd:col-span-2 w-full h-full">
+            <img src='${file}' class='w-full object-cover h-full' />
+        </ div>
+    `
 })

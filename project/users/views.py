@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
-from .models import User
+from .models import User, Posts, PostsFile
 import uuid
 
 def log_in(req):
@@ -107,7 +107,26 @@ def log_out(req):
     return redirect('log_in')
 
 def user_profile(req, username):
-    return render(req, 'user_profile.html')
+    return render(req, 'user_profile.html', {
+        'posts': Posts.objects.all()
+    })
 
 def new_post(req):
-    return render(req, 'user_profile.html', {'type': 'new_post'})
+    if req.method == 'POST':
+        text = req.POST['text']
+        files = req.FILES.get('new_file')
+        post_type = req.POST['post_type']
+        print(req.FILES)
+        new_post = Posts(user_id = req.user, text = text, post_type = post_type)
+        new_post.save()
+
+        new_post_file = PostsFile(files_id = new_post, files = files)
+        new_post_file.save()
+
+        return redirect('user_profile', username = req.user.username)
+    
+
+    return render(req, 'user_profile.html', {
+        'type': 'new_post', 
+
+                                         })
