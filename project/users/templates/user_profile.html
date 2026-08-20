@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block 'main' %}
-    <main class="min-h-[90vh] w-full flex items-start justify-between gap-[20px] bg-[#FADAE3]">
+    <main class="min-h-[90vh] w-full flex items-start justify-between gap-[10px] bg-[#FADAE3]">
         {% if type == 'new_post' %}
         <form class='absolute z-[500] w-full h-screen bg-black/60 backdrop-blur-sm flex items-center justify-center'  method='POST' enctype='multipart/form-data' id='post'>
             <div class='bg-[#FADAE3] p-5 max-w-[600px] w-full flex flex-col items-start gap-[20px] relative'>
@@ -42,54 +42,158 @@
                         </select>
                     </div>
                 </div>
-                <textarea name="text" id="" class='w-full max-h-[500px] min-h-[100px] bg-black/0 border border-[#5B0E14] rounded-lg px-2 py-1 outline-none' placeholder='{{ user.first_name }} What do you think?' ></textarea>
+                <textarea name="text" id="" class='w-full min-h-[20px] max-h-[100px] bg-black/0 border border-[#5B0E14] rounded px-2 py-1 outline-none' placeholder='{{ user.first_name }} What do you think?' ></textarea>
+                <div id="tag_container" class="flex flex-wrap gap-2 my-2"></div>
                 <div id='show_posts' class='grid grid-cols-[repeat(auto-fit,minmax(calc(50%-5px),1fr))] w-full auto-rows-[360px] gap-[5px] overflow-y-auto max-h-[380px]'>
-
                 </div>
                 <div class='flex items-center justify-between gap-[20px] w-full'>
                     <div class='text-2xl text-[#5B0E14] flex items-center gap-[20px] relative' >
-                        <div class='cursor-pointer' >
+                        <div class='cursor-pointer max-w-[30px]' >
                             {% csrf_token %}
-                            <input type="file" name='new_file' class='opacity-0 absolute z-[100]'id='files'>
+                            <input type="file" name='new_file' class='opacity-0 absolute w-full max-w-[27px] z-[100]'id='files' accept="image/*,video/*" multiple>
                             <i class="fa-solid fa-images cursor-pointer duration-100 hover:opacity-80"></i>
                         </div>
                         <i class="fa-solid fa-user-tag cursor-pointer duration-100 hover:opacity-80"></i>
+                        <input type="text" placeholder='#Hashtag' class='text-[#5B0E14] bg-[#FADAE3] outline-none placeholder:text-[#5B0E14] text-xl px-[10px]' id='tag_input' list='hashtags_list'>
+                        <datalist id='hashtags_list'>
+                            {% for t in all_hashtags %}
+                                <option>{{ t.name }}</option>
+                            {% endfor %}
+                        </datalist>
                     </div>
+                    <input type="hidden" name="hashtags" id="hidden-tags">
                     <button type='submit' class='bg-[#5B0E14] text-white px-5 py-2 rounded max-w-[220px] w-full'>Post</button>
                 </div>
             </div>
         </form>
+        {% elif type == 'post_details' %}
+        <div class='absolute z-[500] w-full h-screen bg-black/60 backdrop-blur-sm flex items-center justify-center'>
+            <div class='flex w-full justify-center gap-1 rounded h-auto min-w-[220px] items-stretch'>
+                <div class='flex flex-col items-center gap-[12px] bg-white px-5 py-4 rounded min-w-[420px]'>
+                    <div class='flex w-full justify-start gap-[10px] relative'>
+                        {% if post_info.user.profile %}
+                            <img src="{{ post_info.user.profile.url }}" alt="{{ post_info.user.profile.url }}" class="w-[45px] h-[45px] rounded-[50%] object-cover  ">
+                        {% else %}
+                            <img src="{% static 'images/profile.png' %}" alt="" class="w-[45px] h-[45px] rounded-[50%] object-cover ">
+                        {% endif %}
+                        <div class="leading-[1.2]">
+                            <p class="font-bold">
+                                {{ post_info.user.first_name }}
+                                {{ post_info.user.last_name }}
+                            </p>
+                            <p class="opacity-70 text-[14px]">
+                                {{ post_info.time }}
+                            </p>
+                        </div>
+                        <div class='flex items-center gap-[10px] absolute top-0 right-0 opacity-50'>
+                            <p class='tracking-[0.5px]'>{{ p.post_type }}</p>
+                            {% if p.post_type == 'Public' %}
+                                <i class="fa-solid fa-earth-americas text-xl "></i>
+                            {% elif p.post_type == 'Friends' %}
+                                <i class="fa-solid fa-user-group"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class='flex flex-col items-start gap-[10px] max-h-[70vh] overflow-auto'>
+                        <p>{{ post_info.text }}</p>
+                        {% if posts %}
+                            {% for p in posts %}
+                                {% if '.jpg' in p.files.url or '.png' in p.files.url %}
+                                    <img src="{{ p.files.url }}" alt="" class='max-w-[500px] w-full'>
+                                {% else %}
+                                    <video controls class='max-w-[500px] w-full'>
+                                        <source src="{{ p.files.url }}" >
+                                    </video>
+                                {% endif %}
+                            {% endfor %} 
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center gap-[15px] w-full justify-between">
+                        <div class="flex items-center gap-[15px] text-gray-500 text-2xl h-min">
+                            <div class='flex items-center gap-[5px] cursor-pointer'>
+                                <i class="fa-regular fa-star"></i>
+                                <p class="text-[17px]">0</p>
+                            </div>
+                            <div class='flex items-center gap-[5px] cursor-pointer'>
+                                <i class="fa-regular fa-comment"></i>
+                                <p class="text-[17px]">0</p>
+                            </div>
+                            <div class='flex items-center gap-[5px] cursor-pointer'>
+                                <i class="fa-regular fa-paper-plane"></i>
+                                <p class="text-[17px]">0</p>
+                            </div>
+                        </div>
+                        {% if tags %}
+                        <div class='flex items-center gap-[4px] flex-wrap text-sm text-[#5B0E14]'>
+                            {% for t in tags %}
+                            <span>{{ t }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class='max-w-[300px] w-full bg-white rounded relative px-2 py-3 flex flex-col justify-between '>
+                    <div class='flex justify-end w-full'>
+                        <a href="{% url 'user_profile' user_profile.username %}" class=' '>
+                            <i class="fa-solid fa-x text-gray-500 cursor-pointer "></i>
+                        </a>
+                    </div>
+                    <div class='h-full max-h-[70vh]'>
+                        <div>
+                        </div>
+                    </div>
+                    <div class='border p-1 rounded-[100px] flex items-center gap-[10px]'>
+                        {% if user_profile.profile %}
+                            <img src="{{ user_profile.profile.url }}" alt="{{ user_profile.profile }}" class="w-[45px] h-[45px] rounded-[50%] cover border">
+                        {% else %}
+                            <img src="{% static 'images/profile.png' %}" alt="" class="w-[45px] h-[45px] rounded-[50%] object-cover">
+                        {% endif %}
+                        <input type="text" name='comment' placeholder='comment...' class='outline-none'>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endif %}
         {% include 'nav.html' %}
-        <section class="flex flex-col items-center w-full h-screen overflow-auto">
+        <section class="flex flex-col items-center w-full h-screen overflow-auto max-w-[1170px] overflow-x-hidden px-[10px]">
             <section class="flex flex-col items-start w-full py-[15px] min-h-[52vh] justify-start">
                 <div class="w-full relative">
-                    {% if user.cover %}
-                    <img src="{{ user.cover.url }}" alt="{{ user.cover.url }}" class="w-full object-cover rounded h-[270px] "> 
+                    {% if user_profile.cover %}
+                    <img src="{{ user_profile.cover.url }}" alt="{{ user_profile.cover.url }}" class="w-full object-cover rounded h-[270px] "> 
                     {% else %}
                     <img src="{% static 'images/default_cover.png' %}" alt="" class="w-full object-cover rounded h-[270px] ">
                     {% endif %}
+                    {% if user_profile.username == user.username %}
                     <button class="absolute bottom-5 right-5 bg-[#5B0E14] text-white px-10 py-2 rounded flex justify-between items-center gap-[10px] cursor-pointer hover:opacity-80 duration-100">Edit <i class="fa-solid fa-pen"></i></button>
+                    {% endif %}
                     <div class='relative w-[150px] '>
-                        {% if user.profile %}
-                        <img src="{{ user.profile.url }}" alt="{{ user.profile }}" class="w-[150px] h-[150px] rounded-[50%] object-cover border border-[#FAF1F4] border-[5px] absolute -bottom-16 left-10 ">
+                        {% if user_profile.profile %}
+                            <img src="{{ user_profile.profile.url }}" alt="{{ user_profile.profile }}" class="w-[150px] h-[150px] rounded-[50%] object-cover border border-[#FAF1F4] border-[5px] absolute -bottom-16 left-10 ">
                         {% else %}
-                        <img src="{% static 'images/profile.png' %}" alt="" class="w-[150px] h-[150px] rounded-[50%] border object-cover border-[#FAF1F4] border-[5px] absolute -bottom-16 left-10 ">
+                            <img src="{% static 'images/profile.png' %}" alt="" class="w-[150px] h-[150px] rounded-[50%] border object-cover border-[#FAF1F4] border-[5px] absolute -bottom-16 left-10 ">
                         {% endif %}
+                        {% if user.username == user_profile.username %}
                         <div class="flex items-center justify-center rounded-[50%] w-[45px] h-[45px]  duration-100 cursor-pointer text-[#5B0E14] hover:text-white hover:bg-[#5B0E14] absolute -bottom-[60px] -right-[40px] backdrop-blur-md border-2">
                             <i class="fa-solid fa-pen"></i>
                         </div>
+                        {% elif user_profile.active %}
+                            <div class="rounded-[50%] w-[30px] h-[30px] cursor-pointer bg-green-500 absolute -bottom-[55px] -right-[35px] border border-white border-2">
+                            </div>
+                        {% else %}
+                            <div class="rounded-[50%] w-[30px] h-[30px] cursor-pointer bg-[red] absolute -bottom-[55px] -right-[35px] border border-white border-2">
+                            </div>
+                        {% endif %}
                     </div>
                 </div> 
                 <div class="relative w-full">
                     <div class='absolute top-3 left-[210px] flex items-center gap-[50px] justify-between'>
                         <div>
-                            <h2 class='font-semibold text-2xl'>{{ user.first_name }} {{ user.last_name }}</h2>
-                            <p class="text-sm text-gray-500">@{{ user.username }}</p>
+                            <h2 class='font-semibold text-2xl'>{{ user_profile.first_name }} {{ user_profile.last_name }}</h2>
+                            <p class="text-sm text-gray-500">@{{ user_profile.username }} {% if user_profile.is_staff %} <i class="fa-solid fa-star text-yellow-500"></i> {% endif %}</p>
                         </div>
                         <div class="flex items-center gap-[30px]">
                             <div class="flex flex-col items-center gap-0 opacity-70 leading-[1.1]">
-                                <p class="font-bold text-[30px]">0</p>
+                                <p class="font-bold text-[30px]">{{ posts|length }}</p>
                                 <p class="text-sm tracking-[1px]">Posts </p>
                             </div>
                             <div class="flex flex-col items-center gap-0 opacity-70 leading-[1.1]">
@@ -106,6 +210,7 @@
                             </div>
                         </div>
                     </div>
+                    {% if user_profile.username == user.username %}
                     <div>
                         <i class="fa-solid fa-plus absolute top-5 right-2 text-gray-800 text-2xl duration-100 hover:text-[#5B0E14] cursor-pointer " id="new_post"></i>
                         <div class='bg-[#A3202A] absolute translate-x-[130px] right-0 z-[100] top-[60px] w-max px-3 py-5 rounded flex flex-col items-center gap-[15px] opacity-100 duration-300' id='nav'>
@@ -122,39 +227,40 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
             </section>
             <section class='w-full flex items-start gap-[40px] justify-between'>
                 <div class="flex flex-col items-start gap-[5px]">
-                    <h2 class="text-[#5B0E14] text-2xl font-bold">About me</h2>
+                    <h2 class="text-[#5B0E14] text-2xl font-bold">About {% if user_profile.username == user.username %} me {% else %} {{ user_profile.first_name }} {% endif %} </h2>
                     <ul class="text-sm text-gray-500 flex flex-col items-start gap-[5px]">
                         <li class="flex items-end gap-[20px] justify-between ">
                             <i class="fa-regular fa-user text-[#5B0E14]"></i> 
                             <span>
-                                @{{ user.username }}
+                                @{{ user_profile.username }}
                             </span>
                         </li>
                         <li class="flex items-end gap-[20px] justify-between "> 
                             <i class="fa-solid fa-cake-candles text-[#5B0E14]"></i>  
                             <span>
-                                {{ user.b_day }}
+                                {{ user_profile.b_day }}
                             </span>
                         </li>
                         <li class="flex items-end gap-[16px] justify-between ">
                             <i class="fa-solid fa-venus-mars text-[#5B0E14]"></i>
                              <span>
-                                {{ user.gender }}
+                                {{ user_profile.gender }}
                             </span>
                         </li>
                         <li class="flex items-end gap-[20px] justify-between ">
                             <i class="fa-regular fa-envelope text-[#5B0E14]"></i> 
                             <span>
-                                {{ user.email }}
+                                {{ user_profile.email }}
                             </span>
                         </li>
                     </ul>
                 </div>
-                <div class="w-full flex flex-col items-center gap-[20px]">
+                <div class="w-full flex flex-col items-center gap-[20px] ">
                     <div class='w-full max-w-[650px] border border-[#5B0E14] rounded flex items-center p-1 rounded-[130px] relative'>
                         {% if user.profile %}
                             <img src="{{ user.profile.url }}" alt="" class='rounded-[50%] w-[40px] h-[40px]'>
@@ -174,55 +280,115 @@
                     </nav>
                 </div>
             </section>
-            <section class="grid grid-cols-2 mt-[50px] gap-[25px] pb-[50px]">
+            <section class="grid grid-cols-2 mt-[50px] gap-[25px] pb-[50px]">           
                 {% if posts %}
-                <div class='flex flex-col items-start w-full gap-[5px] border rounded p-2 border-[#5B0E14]'>
-                    {% for u in posts %}
-
+                {% for p in posts %}
+                {% if p.post_type == 'Public' or user_profile.username == user.username %}
+                <div class='flex flex-col items-start w-full gap-[10px] rounded p-2 shadow-md shadow-[#5B0E14] h-full pt-[10px]' >
                     <div class='flex w-full justify-start gap-[10px] relative'>
-                        <img src="{{ user.profile }}" alt="" class="w-[45px] h-[45px] rounded-[50%]">
+                        {% if user_profile.profile %}
+                        <img src="{{ user_profile.profile.url }}" alt="{{ user_profile.profile }}" class="w-[45px] h-[45px] rounded-[50%] object-cover  ">
+                        {% else %}
+                        <img src="{% static 'images/profile.png' %}" alt="" class="w-[45px] h-[45px] rounded-[50%] object-cover ">
+                        {% endif %}
                         <div class="leading-[1.2]">
                             <p class="font-bold">
-                                {{user.first_name}}
-                                {{user.last_name}}
+                                {{user_profile.first_name}}
+                                {{user_profile.last_name}}
                             </p>
-                            <p class="opacity-70 text-sm">
-                                20:00
+                            <p class="opacity-70 text-[14px]">
+                                {{p.time}}
                             </p>
                         </div>
                         <div class='flex items-center gap-[10px] absolute top-0 right-0 opacity-50'>
-                            <p class='tracking-[0.5px]'>{{u.post_type}}</p>
+                            <p class='tracking-[0.5px]'>{{p.post_type}}</p>
+                            {% if p.post_type == 'Public' %}
                             <i class="fa-solid fa-earth-americas text-xl "></i>
+                            {% elif p.post_type == 'Friends' %}
+                            <i class="fa-solid fa-user-group"></i>
+                            {% endif %}
                         </div>
                     </div>
-                    <p>{{u.text}}</p>
-                    {% comment %} <img src="{{ u. }}" alt=""> {% endcomment %}
-                    <div class="flex items-center justify-between w-full">
-                        <div class="flex items-center gap-[15px] text-gray-500 text-2xl">
-                            <div class='flex items-center gap-[5px] cursor-pointer'>
-                                <i class="fa-regular fa-star"></i>
-                                <p class="text-[17px]">0</p>
-                            </div>
-                            <div class='flex items-center gap-[5px] cursor-pointer'>
-                                <i class="fa-regular fa-comment"></i>
-                                <p class="text-[17px]">0</p>
-                            </div>
-                            <div class='flex items-center gap-[5px] cursor-pointer'>
-                                <i class="fa-regular fa-paper-plane"></i>
-                                <p class="text-[17px]">0</p>
-                            </div>
+                    <a href="{% url 'post_details' p.id %}" class='w-full'>
+                        <div class="{% if p.text|length <= 100 and p.files.all|length < 1 %} min-h-[520px] bg-red-500 h-full w-full font-bold text-3xl justify-center flex items-center  {% endif %} break-all break-normal">
+                            <p>
+                                {{p.text}}
+                            </p>
                         </div>
-                        <i class="fa-regular fa-bookmark text-2xl text-yellow-600"></i>
+                    </a>
+                    {% if p.hashtags.all %}
+                        <div class='flex items-center justify-start w-full flex-wrap gap-[10px]'>
+                            {% for t in p.hashtags.all %}
+                                <div class='text-[15px] font-semibold rounded-[20px] text-[#5B0E14] w-max'>
+                                    {{ t.name }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <a href="{% url 'post_details' p.id %}" class='w-full h-full'>
+                    <div class='grid grid-cols-2 w-full gap-1 rounded h-full'>
+                        {% if p.files.all|length <= 4 %}
+                            {% for f in p.files.all %}
+                                {% if '.png' in f.files.url or '.jpg' in f.files.url %}
+                                <img src="{{ f.files.url }}" alt="" class="last:odd:col-span-2 w-full h-full object-cover {% if p.files.all|length > 2 %} max-h-[250px] {% endif %}">
+                                {% else %}
+                                <div class="last:odd:col-span-2 w-full h-full object-cover {% if p.files.all|length > 2 %} max-h-[250px] {% endif %} flex items-center justify-center relative ">
+                                    <div class='absolute text-3xl text-white backdrop-blur-md w-[60px] h-[60px] rounded-[50%] bg-[#5B0E14] flex items-center justify-center duration-100 hover:opacity-80 cursor-pointer z-[30]'>
+                                        <i class="fa-solid fa-play absolute right-[30%]"></i>
+                                    </div>
+                                    <div class='w-full h-full bg-black/30 absolute z-[20]'>
+                                    </div>
+                                    <video src="{{ f.files.url }}" class='w-full h-full object-cover'>Not found</video>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% for f in p.files.all|slice:":3" %}
+                                {% if '.png' in f.files.url or '.jpg' in f.files.url %}
+                                    <img src="{{ f.files.url }}" alt="" class="last:odd:col-span-2 w-full h-full object-cover {% if p.files.all|length > 2 %} max-h-[250px] {% endif %}">
+                                {% else %}
+                                    <video src="{{ f.files.url }}" controls class="last:odd:col-span-2 w-full h-full object-cover {% if p.files.all|length > 2 %} max-h-[250px] {% endif %}">Not found</video>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% for f in p.files.all|slice:"3:4" %}
+                                <div class="relative overflow-hidden w-full h-full max-h-[250px]">
+                                    {% if '.png' in f.files.url or '.jpg' in f.files.url %}
+                                        <img src="{{ f.files.url }}" alt="" class="w-full h-full object-cover blur-[3px]">
+                                    {% else %}
+                                        <video src="{{ f.files.url }}" class="w-full h-full object-cover blur-[3px]"></video>
+                                    {% endif %}
+                                    
+                                    <div class="absolute inset-0 flex items-center justify-center text-white text-2xl font-bold bg-black/30">
+                                        +{{ p.files.all|length|add:"-3" }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </a>
+                    <div class="flex items-center gap-[15px] text-gray-500 text-2xl h-min">
+                        <div class='flex items-center gap-[5px] cursor-pointer'>
+                            <i class="fa-regular fa-star"></i>
+                            <p class="text-[17px]">0</p>
+                        </div>
+                        <div class='flex items-center gap-[5px] cursor-pointer'>
+                            <i class="fa-regular fa-comment"></i>
+                            <p class="text-[17px]">0</p>
+                        </div>
+                        <div class='flex items-center gap-[5px] cursor-pointer'>
+                            <i class="fa-regular fa-paper-plane"></i>
+                            <p class="text-[17px]">0</p>
+                        </div>
                     </div>
                 </div>
+                {% endif %}
                 {% endfor %}
-            {% else %}
-            <p>None</p>
             {% endif %}
             </section>
             <div class="w-full flex items-center justify-center text-3xl gap-[10px] py-[50px] flex-col tracking-[1px]">
-                <p>{{user.first_name}}'s birthday is {{user.b_day}}</p>
-                <p class="text-sm opacity-50">{{user.date_joined}}</p>
+                <p>{{user_profile.first_name}}'s birthday is {{user_profile.b_day}}</p>
+                <p class="text-sm opacity-50">{{user_profile.date_joined}}</p>
             </div>
         </section>
         {% include 'aside.html' %}

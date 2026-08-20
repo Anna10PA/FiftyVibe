@@ -30,17 +30,75 @@ new_post.addEventListener('click', (e) => {
 })
 
 
-// user_profile.html
+// user_profile.html (add post)
+let filesInput = document.querySelector('#files')
+let show_posts = document.querySelector('#show_posts')
 
-let files = document.querySelector('#files')
+let fileContainer = new DataTransfer()
 
-files.addEventListener('change', (e) => {
-    let file = URL.createObjectURL(e.target.files[0])
-    let show_posts = document.querySelector('#show_posts')
+filesInput.addEventListener('change', (e) => {
+    let newFiles = e.target.files
 
-    show_posts.innerHTML += `
-        <div class="last:odd:col-span-2 w-full h-full">
-            <img src='${file}' class='w-full object-cover h-full' />
-        </ div>
-    `
+    for (let i = 0; i < newFiles.length; i++) {
+        let currentFile = newFiles[i]
+        fileContainer.items.add(currentFile)
+        let fileUrl = URL.createObjectURL(currentFile)
+
+        if (currentFile.type.includes('image')) {
+            show_posts.innerHTML += `
+            <div class="last:odd:col-span-2 w-full h-full">
+            <img src='${fileUrl}' class='w-full object-cover h-full' />
+            </div>
+            `
+        } else if (currentFile.type.includes('video')) {
+            show_posts.innerHTML += `
+            <div class="last:odd:col-span-2 w-full h-full">
+                <video class="h-full">
+                    <source src='${fileUrl}'>
+                </video>
+            </div>
+        `
+        }
+
+    }
+
+    filesInput.files = fileContainer.files
+})
+
+
+// user_profile.html (add tags)
+let tagInput = document.querySelector('#tag_input')
+let tagsContainer = document.querySelector('#tag_container')
+let hiddenTagsInput = document.querySelector('#hidden-tags')
+
+let tagsArray = []
+
+
+function addTag() {
+    let tagValue = tagInput.value.trim()
+
+    if (tagValue !== "") {
+        if (!tagValue.startsWith('#')) {
+            tagValue = '#' + tagValue
+        }
+
+        tagsArray.push(tagValue)
+
+        tagsContainer.innerHTML += `
+            <span class="bg-red-200 text-red-800 px-2 py-1 rounded-full text-sm">
+                ${tagValue.toLowerCase()}
+            </span>
+        `
+
+        hiddenTagsInput.value = tagsArray.join(',')
+        tagInput.value = ''
+    }
+}
+
+
+tagInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault()
+        addTag()
+    }
 })
